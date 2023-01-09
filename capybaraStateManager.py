@@ -2,6 +2,7 @@ import random
 import turtle
 
 import constants
+import time
 
 
 class CapybaraStateManager:
@@ -21,41 +22,51 @@ class CapybaraStateManager:
 
     def manage(self):
         while True:
-            self.hunger_turtle.clear()
-            self.hunger_turtle.write("Hunger: " + str(self.capybara.hunger), font=('arial',20,'bold'))
-            self.sleep_turtle.clear()
-            self.sleep_turtle.write("Sleep: " + str(self.capybara.sleep), font=('arial',20,'bold'))
-            self.state_turtle.clear()
-            self.state_turtle.write("State: " + self.capybara.state, font=('arial', 20, 'bold'))
-
             current_state = self.capybara.state
             match self.capybara.state:
                 case constants.eat:
-                    self.capybara.hunger += constants.dx_default / 2
+                    self.capybara.hunger += int(constants.dx_default / 2)
+                    self.draw_states()
                     if self.capybara.is_sleepy() and not self.capybara.is_hungry()\
                             and self.capybara.hunger >= constants.upper_threshold:
                         self.capybara.state = constants.sleep
-                    elif not self.capybara.is_sleepy() and not self.capybara.is_hungry() and self.capybara.hunger > constants.upper_threshold:
+                    elif not self.capybara.is_sleepy() and not self.capybara.is_hungry() and self.capybara.hunger >= constants.upper_threshold:
                         self.choose_next_activity()
                 case constants.sleep:
-                    self.capybara.sleep += constants.dx_default / 2
+                    self.capybara.sleep += int(constants.dx_default / 2)
+                    self.draw_states()
                     if self.capybara.is_hungry() and not self.capybara.is_sleepy() \
                             and self.capybara.sleep >= constants.upper_threshold:
                         self.capybara.state = constants.eat
-                    elif not self.capybara.is_sleepy() and not self.capybara.is_hungry() and self.capybara.sleep > constants.upper_threshold:
+                    elif not self.capybara.is_sleepy() and not self.capybara.is_hungry() and self.capybara.sleep >= constants.upper_threshold:
                         self.choose_next_activity()
                 case constants.swim:
                     self.capybara.sleep -= constants.dx_default
                     self.capybara.hunger -= constants.dx_default
+                    self.draw_states()
                     self.route_entertainment_activity()
                 case constants.chill:
                     self.capybara.hunger -= constants.dx_default
+                    self.draw_states()
                     self.route_entertainment_activity()
                 case constants.be_petted:
                     self.capybara.sleep -= constants.dx_default
+                    self.draw_states()
                     self.route_entertainment_activity()
             if current_state != self.capybara.state:
                 self.capybara.move()
+
+
+            time.sleep(1)
+
+
+    def draw_states(self):
+        self.hunger_turtle.clear()
+        self.hunger_turtle.write("Hunger: " + str(self.capybara.hunger), font=('arial', 20, 'bold'))
+        self.sleep_turtle.clear()
+        self.sleep_turtle.write("Sleep: " + str(self.capybara.sleep), font=('arial', 20, 'bold'))
+        self.state_turtle.clear()
+        self.state_turtle.write("State: " + self.capybara.state, font=('arial', 20, 'bold'))
 
     def choose_next_activity(self):
         match self.capybara.state:

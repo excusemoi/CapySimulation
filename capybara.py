@@ -1,13 +1,14 @@
+import time
 import turtle
 
 import constants
 
 
 class Capybara(turtle.Turtle):
-    sleep = 98
-    hunger = 98
+    sleep = 100
+    hunger = 100
     enjoy = 0
-    state = constants.sleep
+    state = constants.swim
 
     def __init__(self):
         super().__init__(visible=False)
